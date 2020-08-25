@@ -1,4 +1,5 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 
 const app = express()
 
@@ -15,13 +16,23 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use(bodyParser.json())
+
+app.post('/api/stuff', (req, res, next) => {
+  console.log(req.body)
+  res.status(201).json({
+    message: 'successfully sent stuff for sale',
+  })
+})
+
 app.use('/api/stuff', (req, res) => {
   const stuff = [
     {
       _id: 'regdggh',
       title: 'my first stuff for sale',
       description: 'A clean first stuff for sale with discount included',
-      imageUrl: '',
+      imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/e/e3/Canon_EOS_60D_01.jpg',
       price: 4000,
       userId: '',
     },
@@ -29,7 +40,8 @@ app.use('/api/stuff', (req, res) => {
       _id: 'tebfh',
       title: 'my second stuff for sale',
       description: 'A clean second stuff for sale with discount included',
-      imageUrl: '',
+      imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/e/e3/Canon_EOS_60D_01.jpg',
       price: 7000,
       userId: '',
     },
