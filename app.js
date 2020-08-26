@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const Thing = require('./models/thing')
 
 const app = express()
 mongoose
@@ -30,36 +31,52 @@ app.use((req, res, next) => {
 app.use(bodyParser.json())
 
 app.post('/api/stuff', (req, res, next) => {
-  console.log(req.body)
-  res.status(201).json({
-    message: 'successfully sent stuff for sale',
+  const thing = new Thing({
+    title: req.body.title,
+    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    price: req.body.price,
+    userId: req.body.userId,
   })
+  thing
+    .save()
+    .then(() => {
+      res.status(201).json({
+        message: 'successfully save post to the database',
+      })
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+      })
+    })
 })
-
-app.use('/api/stuff', (req, res) => {
-  const stuff = [
-    {
-      _id: 'regdggh',
-      title: 'my first stuff for sale',
-      description: 'A clean first stuff for sale with discount included',
-      imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/e/e3/Canon_EOS_60D_01.jpg',
-      price: 4000,
-      userId: '',
-    },
-    {
-      _id: 'tebfh',
-      title: 'my second stuff for sale',
-      description: 'A clean second stuff for sale with discount included',
-      imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/e/e3/Canon_EOS_60D_01.jpg',
-      price: 7000,
-      userId: '',
-    },
-  ]
-  res.status(201).json(stuff)
+app.get('/api/stuff/:id', (req, res, next) => {
+  Thing.findOne({
+    _id: req.params.id,
+  })
+    .then((thing) => {
+      res.status(201).json(thing)
+    })
+    .catch((error) => {
+      res.status(404).json({
+        error: error,
+      })
+    })
+})
+app.use('/api/stuff', (req, res, next) => {
+  Thing.find()
+    .then((things) => {
+      res.status(200).json(things)
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+      })
+    })
 })
 module.exports = app
 
 //y8HmOnYfokPSaFnc
 //mongodb+srv://raboski:<password>@cluster0.dmr0d.mongodb.net/<dbname>?retryWrites=true&w=majority
+//https://upload.wikimedia.org/wikipedia/commons/e/e3/Canon_EOS_60D_01.jpg
