@@ -1,8 +1,19 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 const app = express()
-
+mongoose
+  .connect(
+    'mongodb+srv://raboski:y8HmOnYfokPSaFnc@cluster0.dmr0d.mongodb.net/<dbname>?retryWrites=true&w=majority',
+  )
+  .then(() => {
+    console.log('successfully connected to mongoDB atlas')
+  })
+  .catch((error) => {
+    console.log('Unable to connect to mongoDB atlas')
+    console.error(error)
+  })
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader(
@@ -49,3 +60,6 @@ app.use('/api/stuff', (req, res) => {
   res.status(201).json(stuff)
 })
 module.exports = app
+
+//y8HmOnYfokPSaFnc
+//mongodb+srv://raboski:<password>@cluster0.dmr0d.mongodb.net/<dbname>?retryWrites=true&w=majority
